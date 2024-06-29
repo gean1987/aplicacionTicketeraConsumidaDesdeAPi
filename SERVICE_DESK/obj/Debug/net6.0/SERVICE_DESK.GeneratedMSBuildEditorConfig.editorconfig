@@ -1,0 +1,81 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = SERVICE_DESK
+build_property.RootNamespace = SERVICE_DESK
+build_property.ProjectDir = C:\Users\RENZO\Downloads\serivceDeskLogistica\SERVICE_DESK\
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = true
+build_property.MSBuildProjectDirectory = C:\Users\RENZO\Downloads\serivceDeskLogistica\SERVICE_DESK
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/Acceso/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjZXNvXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/Error/OperacionSinAutorizacion.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXJyb3JcT3BlcmFjaW9uU2luQXV0b3JpemFjaW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/Home/CuentaCreada.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxDdWVudGFDcmVhZGEuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/Shared/_Plantillaticketera.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9QbGFudGlsbGF0aWNrZXRlcmEuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/TicketAPI/AbrirTicket.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGlja2V0QVBJXEFicmlyVGlja2V0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/TicketAPI/ListadoGeneral.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGlja2V0QVBJXExpc3RhZG9HZW5lcmFsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/TicketAPI/MisTickets.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGlja2V0QVBJXE1pc1RpY2tldHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/TicketAPI/MisTicketsAsignados.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGlja2V0QVBJXE1pc1RpY2tldHNBc2lnbmFkb3MuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-879yidg4st

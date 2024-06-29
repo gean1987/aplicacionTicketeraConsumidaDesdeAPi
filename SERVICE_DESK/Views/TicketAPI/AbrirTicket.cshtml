@@ -1,0 +1,555 @@
+﻿@using System.IO;
+@using Microsoft.AspNetCore.Http;
+@using System.Security.Claims;
+
+@inject IHttpContextAccessor Accessor
+@{
+    string? email = Accessor.HttpContext.Session.GetString("emailUsuarioNoEncontrado");
+    // Obtener nombre y rol del usuario desde la sesión
+    string usuarioNombres = Accessor.HttpContext.Session.GetString("Usuario_NombresUsuario") ?? "Invitado";
+    string usuarioRol = Accessor.HttpContext.Session.GetString("Usuario_Rol") ?? "Sin Rol";
+
+    // Obtener los roles del usuario
+    var roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+
+    var ticket = ViewBag.Ticket as SERVICE_DESK.Models.Ticket;
+    var estados = ViewBag.Estados as List<SERVICE_DESK.Models.Estado>;
+    var responsables = ViewBag.responsables as List<SERVICE_DESK.Models.Usuario>;
+
+    var equipos = ViewBag.equipos as List<SERVICE_DESK.Models.equipo>;
+    var tipoConsulta = ViewBag.tipoConsulta as List<SERVICE_DESK.Models.tipoConsulta>;
+
+}
+
+@if (usuarioNombres != "Invitado")
+{
+    ViewBag.Title = "Revisar Tickets";
+    Layout = "~/Views/Shared/_Plantillaticketera.cshtml";
+}
+else
+{
+    ViewBag.Title = "Sin Autorización";
+    Layout = "~/Views/Shared/Error.cshtml";
+}
+
+<div class="d-none">
+    @if (TempData["mensaje"] != null)
+    {
+        <div class="@TempData["alerta"]" role="alert">
+            @TempData["mensaje"]
+        </div>
+    }
+</div>
+
+
+
+<style>
+    .custom-sweet-alert-container {
+        z-index: 30050;
+    }
+
+    .respuestaTicket table {
+        color: black !important;
+        border-collapse: collapse; /* Para asegurarse de que los bordes no se dupliquen */
+    }
+
+    .respuestaTicket th, .respuestaTicket td {
+        border: 1px solid black !important; /* Define el estilo del borde, el grosor y el color */
+        padding: 8px !important /* Añade un poco de espacio interior */
+    }
+
+    .respuestaTicket a {
+        color: #1861dd !important;
+    }
+
+
+    .col-xl-personalizado {
+        max-width: 130px !important;
+        max-height: 120px !important;
+    }
+
+        .col-xl-personalizado .card-img-top {
+            max-width: 80%; /* Ajusta el tamaño de la imagen */
+            margin: 5px auto 0 auto; /* Centra la imagen horizontalmente */
+        }
+
+        .col-xl-personalizado .text-center {
+            padding: 1rem; /* Ajusta el padding alrededor del texto */
+        }
+
+
+
+    .main-content-app {
+        height: 100%;
+    }
+
+    .main-content-body {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .main-content-body-chat {
+        flex: 1;
+        overflow-y: auto; /* Permite el desplazamiento vertical */
+    }
+
+    .main-chat-body {
+        flex: 1;
+        overflow-y: auto; /* Permite el desplazamiento vertical */
+        max-height: calc(100vh - 120px); /* Ajusta este valor según el tamaño del encabezado y el pie de página */
+    }
+
+    .main-chat-footer {
+        background-color: #EAEAEA !important;
+        position: sticky;
+        bottom: 0;
+        width: 100%;
+        padding: 1rem;
+    }
+
+    .color_mensaje {
+        background-color: #9ef1e9 !important;
+    }
+
+    .color_Caja_correo {
+        background-color: #158c8c !important;
+        color: #fff !important;
+    }
+</style>
+
+
+
+
+
+
+
+
+@if (ticket != null)
+{
+
+    <div class="modal fade " id="extralargemodal" tabindex="-1" role="dialog" style="margin-top:0!important">
+        <div class="modal-dialog modal-xl modal-dialog-centered col-md-10 bg-white" role="document">
+            <div class="modal-content bg-white">
+                <div class="modal-header b d-flex justify-content-end">
+                    <button class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div>
+                    <!--cuerpo del formulario-->
+                    <div class="modal-body bg-white" style="margin-top:0!important;">
+                        <div class="cuerpo col col-lg-12 bg-white">
+                            <form id="updateTicketForm" class="col col-lg-12" style="display:flex;justify-content:center;flex-direction:column;padding-bottom:0!important;" enctype="multipart/form-data" onsubmit="submitForm(event)">
+                                <h1 class="text-center">Formulario de Ticket</h1>
+                                <div class="col col-lg-12 bg-white">
+                                    <div class="progressbar">
+                                        <div class="progress-step progress-step-active" data-title="Detalle"></div>
+                                        <div class="progress-step" data-title="Contenido"></div>
+                                    </div>
+                                    <div class="form-step form-step-active col col-lg-12">
+                                        <div class="col-lg-6" style="display:none;">
+                                            <div class="form-group">
+                                                <label class="form-label">Emisor <span class="text-red">*</span></label>
+                                                <input type="text" class="form-control" id="emisor" placeholder="Emisor" name="emisor" value="pruebas" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <div class="card-header">
+                                                    <h3 class="card-title">
+                                                        Asunto del ticket: <span>@ticket.asunto</span>
+                                                    </h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" value="@ticket.IdTicket" name="IdTicket">
+                                        <input type="hidden" value="@ticket.fechaGeneracion" name="fechaGeneracion">
+                                        <input type="hidden" value="@ticket.fechaAsignacion" name="fechaAsignacion">
+                                        <input type="hidden" value="@DateTime.Now.ToString("dd/MM/yyyy")" name="fechaCierre">
+                                        <input type="hidden" value="@ticket.asunto" name="asunto">
+                                        <input type="hidden" value="@ticket.cuerpoTicket" name="cuerpoTicket">
+                                        <input type="hidden" value="@ticket.correoEmisor" name="correoEmisor">
+                                        <input type="hidden" value="@ticket.correoReceptor" name="correoReceptor">
+                                        <input type="hidden" value="@ticket.idEstado" name="idEstado">
+                                        <input type="hidden" value="@ticket.equipo" name="equipo">
+                                        <input type="hidden" value="@ticket.tipoConsulta" name="tipoConsulta">
+                                    </div>
+                                    <div id="sweet-alert" style="position:relative"></div>
+                                    <div class="form-step">
+                                        <div class="col-lg-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h3 class="card-title">Mensaje <span class="text-red">*</span></h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    <textarea id="summernote" name="Contenido"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="btns-group">
+                                            <button type="button" onclick="submitForm(event)" class="btn btn-secondary btn-lg">EnviarTicket</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!--fin del cuerpo del formulario-->
+
+        </div>
+
+    </div>
+
+
+    @if (usuarioRol != "Emisor")
+    {
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="fw-bold"> <i class="zmdi zmdi-ticket-star   "></i> Asunto [ @ticket.IdTicket]:  @ticket.asunto</h4>
+                </div>
+                <div class="card-block">
+                    <div class="table-responsive">
+
+                            <form action="@Url.Action("UpdateTicket", "TicketAPI")"  method="post" >
+
+
+                        <table class="table w-100">
+                            <input type="hidden" name="IdTicket" value="@ticket.IdTicket" />
+                            <tr>
+                                <td class="td-detalle">Fecha Generación:</td>
+                                <td class="td-detalle">
+                                    <span class="detalle">@ticket.GetFechaFormateadaTicket(ticket.fechaGeneracion)</span>
+                                </td>
+                                <td class="td-detalle">Fecha Asignación: </td>
+                                <td class="td-detalle"><span class="detalle">@ticket.GetFechaFormateadaTicket(ticket.fechaAsignacion)</span></td>
+                                <td class="td-detalle">Fecha Cierre: </td>
+                                <td class="td-detalle"><span class="detalle">@ticket.GetFechaFormateadaTicket(ticket.fechaCierre)</span></td>
+                            </tr>
+                            <tr>
+                                <input type="hidden" name="nombreEmisor" id="responsableup" />
+                            </tr>
+                            <tr>
+                                <td class="td-sistema">Responsable:</td>
+
+
+                                <div class="d-none">
+                                            <input type="hidden" value="@ticket.IdTicket" name="IdTicket">
+                                            <input type="hidden" value="@ticket.fechaGeneracion" name="fechaGeneracion">
+                                            <input type="hidden" value="@ticket.fechaAsignacion" name="fechaAsignacion">
+                                            <input type="hidden" value="@ticket.fechaCierre" name="fechaCierre">
+                                            <input type="hidden" value="@ticket.asunto" name="asunto">
+                                            <input type="hidden" value="@ticket.cuerpoTicket" name="cuerpoTicket">
+                                            <input type="hidden" value="@ticket.correoEmisor" name="correoEmisor">
+                                </div>
+
+
+                                <td class="td-detalle">
+                                    <select name="IdEstado" id="@("cboresponsable_" + ticket.IdTicket)" class="form-control  form-select">
+                                        <option value="0">--Seleccione--</option>
+                                        @foreach (var estado in responsables)
+                                        {
+                                            <option value="@estado.correo" selected="@(ticket.correoReceptor == estado.correo)">
+                                                @estado.nombre
+                                            </option>
+                                        }
+                                    </select>
+                                </td>
+                                <td class="td-sistema">Equipo:</td>
+                                <td class="td-detalle">
+                                    <select name="IdEstado"   id="@("cboEstado_" + ticket.IdTicket)" class="form-control  form-select">
+                                        <option value="0">--Seleccione--</option>
+                                        @foreach (var estado in equipos)
+                                        {
+                                            <option value="@estado.idEquipo" selected="@(ticket.equipo == estado.idEquipo)">
+                                                @estado.descripcion
+                                            </option>
+                                        }
+                                    </select>
+                                </td>
+
+                                <td class="td-sistema">tipoConsulta:</td>
+                                <td class="td-detalle">
+                                    <select name="IdEstado" id="@("cboconsulta_" + ticket.IdTicket)" class="form-control  form-select">
+                                        <option value="0">--Seleccione--</option>
+                                        @foreach (var estado in tipoConsulta)
+                                        {
+                                            <option value="@estado.idTipoConsulta" selected="@(ticket.tipoConsulta == estado.idTipoConsulta)">
+                                                @estado.descripcion
+                                            </option>
+                                        }
+                                    </select>
+                                </td>
+
+
+
+
+                                <!---->
+
+
+
+                                <div class="col-lg-6" style="display:none">
+
+                                    <div style="display:flex;gap:30px;">
+                                        <input id="prioridad" name="IdPrioridad" />
+                                    </div>
+                                    <div style="display:flex;gap:30px;">
+                                        <input type="text" name="categoria" id="categoria" />
+                                        <input type="text" name="subcategoria" id="subcategoria" />
+                                    </div>
+                                </div>
+
+                            </tr>
+
+
+
+
+
+
+                            <tr>
+                                <td class="td-sistema">Estado:</td>
+                                <td class="td-detalle">
+                                    <select name="IdEstado" id="@("cboEstado_" + ticket.IdTicket)" class="form-control  form-select">
+                                        <option value="0">--Seleccione--</option>
+                                        @foreach (var estado in estados)
+                                        {
+                                            <option value="@estado.IdEstado" selected="@(ticket.IdTicket == estado.IdEstado)">
+                                                @estado.descripcion
+                                            </option>
+                                        }
+                                    </select>
+                                </td>
+
+                                <td>Usuario: </td>
+                                <td>
+                                    <input type="text" class="form-control form-control-sm" name="Propietario" value="@ticket.correoEmisor" />
+                                </td>
+                                <td><input type="submit" name="" id="editar" value="Aceptar" class="boton boton-enviaTicket btn-lg" onclick="actualizarTicket('@ticket.IdTicket')" /></td>
+
+
+                            </tr>
+
+
+                            @if ((ticket.idEstado != 4 || ticket.idEstado != 5))
+                            {
+                                <p style="color:red; font-weight:bold; font-size:1.2rem">Debes responder a este ticket.</p>
+                            }
+
+
+                        </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+    <div class="container-fluid h-100">
+        <div class="row justify-content-center h-100">
+            <div class="col-md-4 col-xl-3 chat">
+            </div>
+            <div class="col-md-12 col-xl-12 chat">
+                <div class="card">
+
+                    <div class="card-header msg_head">
+                        <div class="d-flex bd-highlight">
+                            <div class="img_cont">
+                                <img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" width="50px"  class="rounded-circle user_img" alt="User Image">
+                                <span class="online_icon"></span>
+                            </div>
+                            <div class="user_info">
+                                <span>usuario</span>
+                                <p>Emisor</p>
+                            </div>
+                            <div class="ms-auto d-flex align-items-center">
+                                <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
+                            </div>
+                        </div>
+                        <div class="action_menu">
+                            <ul>
+                                <li>
+                                    <i class="fas fa-user-circle"></i>
+
+                                    @if (usuarioRol == "Responsable")
+                                    {
+                                        <a class="text-white" href="@(Url.Action("MisTicketsAsignados", "Ticket"))">Regresar al inicio</a>
+
+                                    }
+                                    @if (usuarioRol == "Administrador")
+                                    {
+                                        <a class="text-white" href="@(Url.Action("Listado", "Ticket"))">Regresar al inicio</a>
+
+                                    }
+
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+
+                    <div class="card-body msg_card_body">
+
+
+                       
+                            <div class="d-flex justify-content-start mb-4">
+                                <div class="img_cont_msg">
+                                    <img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" width="50px"  class="rounded-circle user_img_msg">
+                                </div>
+                                <div class="msg_cotainer" style="border:2px solid black" > 
+                                    @Html.Raw(ticket.cuerpoTicket)
+                                    <span class="msg_time">8:40 AM, Today</span>
+                                </div>
+                            </div>
+
+
+
+
+
+                            @if (!string.IsNullOrEmpty(ticket.respuestaTicket))
+                            {
+                                <div class="d-flex justify-content-end mb-4">
+                                    <div class="msg_cotainer_send">
+                                        @Html.Raw(ticket.respuestaTicket)
+
+                                        <span class="msg_time_send">8:55 AM, Today</span>
+                                    </div>
+                                    <div class="img_cont_msg">
+                                        <img src="https://avatars.hsoubcdn.com/ed57f9e6329993084a436b89498b6088?s=256" width="50px" class="rounded-circle user_img_msg">
+                                    </div>
+                                </div>
+
+
+
+                            }
+
+                        
+
+
+                    </div>
+
+
+
+
+
+
+                    @if (usuarioRol != "Emisor")
+                    {
+                        <div class="card-footer">
+                            <div class="input-group">
+                                <div class="@(ticket.idEstado != 3 && ticket.idEstado != 4 && !string.IsNullOrEmpty(ticket.correoReceptor) && ticket.correoReceptor != "-"
+? "btn btn-success" : "btn btn-success disabled")" style="background-color:#158c8c!important" data-bs-toggle="modal" data-bs-target="#extralargemodal">
+                                    Responder ticket
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+    @section Scripts {
+    <a href="~/Adjuntos/BundleConfig.cs"></a>
+
+    <script src="~/assets/js/summernote_es_es.js"></script>
+    <script src="~/assets/plugins/select2/select2.full.min.js"></script>
+    <script src="~/assets/js/Script.js"></script>
+    <script src="~/assets/js/sweet-alert.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="~/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#summernote').summernote('destroy');
+
+            $('#summernote').summernote({
+                lang: 'es-ES', // Configura el idioma español
+                tabsize: 2,
+                height: 80,
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'clear']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'help']] // Eliminamos 'codeview' de la barra de herramientas
+                ],
+                callbacks: {
+                    onImageUpload: function (files) {
+                        for (let i = 0; files && i < files.length; i++) {
+                            const reader = new FileReader();
+                            reader.onload = function (e) {
+                                const dataUrl = e.target.result;
+                                $('#summernote').summernote('insertImage', dataUrl);
+                            };
+                            reader.readAsDataURL(files[i]);
+                        }
+                    },
+                    onDialogHidden: function (dialog) {
+                        const dialogType = $(dialog).find('.note-image-dialog, .note-link-dialog, .note-video-dialog').length > 0 ?
+                            ($(dialog).find('.note-image-dialog').length > 0 ? 'image' : ($(dialog).find('.note-link-dialog').length > 0 ? 'link' : 'video')) :
+                            null;
+
+                        if (!dialogType && !$('.modal-dialog').hasClass('show')) {
+                            $('body').addClass('modal-open');
+                        }
+                    }
+                }
+            });
+
+            // Agregar evento para restablecer la clase modal-open al body cuando se cierra el modal
+            $('#extralargemodal').on('hidden.bs.modal', function () {
+                if (!$('.modal-dialog').hasClass('show')) {
+                    $('body').addClass('modal-open');
+                }
+            });
+        });
+
+    </script>
+
+
+    <script>
+        async function submitForm(event) {
+            event.preventDefault(); // Evitar el envío tradicional del formulario
+            const form = document.getElementById('updateTicketForm');
+            const data = new FormData(form);
+            const json = JSON.stringify(Object.fromEntries(data.entries()));
+
+            try {
+                const response = await fetch('@Url.Action("UpdateTicket", "TicketAPI")', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: json
+                });
+
+                if (response.ok) {
+                    window.location.href = '@Url.Action("MisTickets", "TicketAPI")';
+                } else {
+                    const errorText = await response.text();
+                    alert('Error al actualizar el ticket: ' + errorText);
+                }
+            } catch (error) {
+                alert('Error al procesar la solicitud: ' + error.message);
+            }
+        }
+    </script>
+
+<!---->
+}
+
+                        

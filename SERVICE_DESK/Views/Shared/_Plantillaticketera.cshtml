@@ -1,0 +1,479 @@
+﻿@using Microsoft.AspNetCore.Http
+@using System.Security.Claims
+
+@inject IHttpContextAccessor Accessor
+@{
+    string? email = Accessor.HttpContext.Session.GetString("emailUsuarioNoEncontrado");
+    // Obtener nombre y rol del usuario desde la sesión
+    string usuarioNombres = Accessor.HttpContext.Session.GetString("Usuario_NombresUsuario") ?? "Invitado";
+    string usuarioRol = Accessor.HttpContext.Session.GetString("Usuario_Rol") ?? "Sin Rol";
+
+    // Obtener los roles del usuario
+    var roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+}
+<!doctype html>
+<html lang="es" dir="ltr">
+
+<head>
+
+    <!-- META DATA -->
+    <meta charset="UTF-8">
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=0'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Ticketera">
+
+    <!-- FAVICON -->
+    @*<link rel="shortcut icon" type="image/x-icon" href="../assets/images/brand/favicon.ico" />*@
+
+    <!-- TITLE -->
+    <title>@ViewData["Title"] </title>
+
+    <!-- BOOTSTRAP CSS -->
+    <link id="style" href="../assets/plugins/bootstrap/css/bootstrap.min.css?1.0" rel="stylesheet" />
+
+    <!-- STYLE CSS -->
+    <link href="../assets/css/style.css?1.0" rel="stylesheet" />
+    <link href="../assets/css/skin-modes.css?1.0" rel="stylesheet" />
+
+    <!--- FONT-ICONS CSS -->
+
+    <!-- COLOR SKIN CSS -->
+    <link id="theme" rel="stylesheet" type="text/css" media="all" href="../assets/colors/color1.css?1.0" />
+  
+
+
+
+    <style>
+        .container2 {
+            max-width: 100% !important;
+            padding-left: 15px !important;
+            padding-right: 15px !important;
+        }
+
+        .header-brand-img {
+            max-width: 190px;
+        }
+
+
+
+        .boton {
+            display: inline-block;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #212529;
+            text-align: center;
+            text-decoration: none;
+            vertical-align: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-color: transparent;
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            border-radius: 0.25rem;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+       cursor:initial!important;
+        }
+
+
+        .boton-black {
+            color: #fff;
+            background-color: #00ccbe;
+            border-color: #00ccbe;
+            cursor: pointer !important;
+            height:auto!important;
+        }
+
+            .boton-black:hover, .boton-black:focus, .btn:active {
+            transform: scale(1.1);
+            color:#fff cursor: pointer !important;
+                height: auto !important;
+            }
+
+
+            .boton-enviaTicket:hover, .boton-black:focus, .btn:active {
+                transform: scale(1.1);
+                color: #fff cursor: pointer !important;
+                height: auto !important;
+            }
+
+
+        .boton-enviar {
+            color: #fff;
+            background-color: #4d2bfc;
+            border-color: #4d2bfc;
+            cursor: pointer !important;
+            height: auto !important;
+        }
+
+            .boton-enviar:hover, .boton-black:focus, .btn:active {
+                transform: scale(1.1);
+                color: #fff cursor: pointer !important;
+                height: auto !important;
+            }
+
+        .boton-primary {
+            color: #fff;
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .boton-secondary {
+            color: #fff;
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .boton-success {
+            color: #fff;
+            background-color: #198754;
+            border-color: #198754;
+¿        }
+
+        .boton-enviaTicket {
+            color: #fff;
+            background-color: #198754;
+            border-color: #198754;
+            cursor: pointer !important;
+        }
+
+        .boton-info {
+            color: #fff;
+            background-color: #0dcaf0;
+            border-color: #0dcaf0;
+        }
+
+        .boton-warning {
+            color: #212529;
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+
+        .boton-danger {
+            color: #fff;
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+
+
+
+
+
+        .navbar-nav .nav-item .nav-link {
+            color: #fff !important;
+        }
+
+        .navbar-nav .nav-item .dropdown-menu {
+            background-color: #343a40;
+        }
+
+        .navbar-nav .nav-item .dropdown-item {
+            color: #fff !important;
+        }
+
+            .navbar-nav .nav-item .dropdown-item:hover {
+                background-color: #495057;
+            }
+
+
+            .bg-prueba {
+            background-color: #343a40 !important;
+            }
+
+        .navbar-nav .nav-item .dropdown-toggle::after {
+            display: none;
+        }
+
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            color: #fff !important;
+        }
+
+            .user-info h5, .user-info small {
+                margin: 0;
+                color: #fff !important;
+            }
+    </style>
+
+
+</head>
+
+<body class="app sidebar-mini ltr">
+
+    <style>
+        .side-menu__item:hover .side-menu__label {
+            color: white !important;
+        }
+    </style>
+
+   
+    <!-- /GLOBAL-LOADER -->
+    <!-- PAGE -->
+    <div class="page">
+        <div class="page-main">
+
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">
+
+                        @if (usuarioRol == "Administrador" && usuarioRol != "Sin Rol")
+                        {
+
+                            <a class="header-brand1 d-flex flex-column gap-2" href="@(Url.Action("Listado", "Ticket"))">
+                                <img src="../assets/images/brand/ordenador-personal.png" class="d-inline-block align-top" width="70" height="70" alt="logo">
+                                <span class="text-white mt-2">Logitech mesa de servicio</span>
+                            </a>
+
+
+                        }
+
+                        else if (usuarioRol =="Emisor" && usuarioRol != "Sin Rol")
+                        {
+                            <a class="header-brand1 d-flex flex-direction-column gap-2" href="@(Url.Action("MisTickets", "Ticket"))">
+                                <img src="../assets/images/brand/ordenador-personal.png" class="d-inline-block align-top" width="70" height="70" alt="logo">
+                                <span class="text-white mt-2">Logitech mesa de servicio</span>
+
+                            </a>
+                        }
+
+                        else if (usuarioRol == "Responsable" && usuarioRol != "Sin Rol")
+                        {
+                            <a class="header-brand1 d-flex flex-direction-column gap-2" href="@(Url.Action("MisTicketsAsignados", "Ticket"))">
+                                <img src="../assets/images/brand/ordenador-personal.png" class="d-inline-block align-top" width="70" height="70" alt="logo">
+                                <span class="text-white mt-2">Logitech mesa de servicio</span>
+
+                            </a>
+                        }
+
+
+                        else
+                        {
+                            <a class="header-brand1 d-flex flex-direction-column gap-2" href="@(Url.Action("Index", "Home"))">
+
+                                <img src="../assets/images/brand/ordenador-personal.png" class="d-inline-block align-top" width="70" height="70" alt="logo">
+                                <span class="text-white mt-2">Logitech mesa de servicio</span>
+
+
+                            </a>
+                        }
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse bg-prueba" id="navbarNav">
+                        <ul class="navbar-nav ms-auto">
+                           
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="user-info">
+                                        <h5 class=" mb-0 fs-14 fw-semibold text-white">@usuarioNombres</h5>
+                                        <small class=" text-white">@usuarioRol</small>
+                                    </div>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item text-white" href="@(Url.Action("Salir", "Acceso"))">Salir</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+
+            <!--app-content open-->
+            <div class="container2">
+                <div class="side-app">
+
+                    <!-- CONTAINER -->
+                    <div class="main-container container-fluid">
+
+                        <!-- PAGE-HEADER END -->
+                        <!-- ROW-1 OPEN -->
+                        <!-- Row -->
+                        <div class="row " style="margin-top:0!important;top:0!important;">
+                            <div class="card-body">
+                                <main role="main" class="">
+                                    @RenderBody()
+                                </main>
+                           </div>
+                        </div>
+                        <!-- /Row -->
+                    </div>
+                    <!-- CONTAINER CLOSED -->
+                </div>
+            </div>
+            <!--app-content closed-->
+        </div>
+
+        <!-- Sidebar-right -->
+        <div class="sidebar sidebar-right sidebar-animate">
+            <div class="panel panel-primary card mb-0 shadow-none border-0">
+                <div class="tab-menu-heading border-0 d-flex p-3">
+                    <div class="card-title mb-0"><i class="fe fe-bell me-2"></i><span class=" pulse"></span>Notifications</div>
+                    <div class="card-options ms-auto">
+                        <a href="javascript:void(0);" class="sidebar-icon text-end float-end me-3 mb-1" data-bs-toggle="sidebar-right" data-target=".sidebar-right"><i class="fe fe-x text-white"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--/Sidebar-right-->
+        <!-- Country-selector modal-->
+        <!-- Country-selector modal-->
+        <!-- FOOTER -->
+       
+        <!-- FOOTER CLOSED -->
+    </div>
+
+    <!-- BACK-TO-TOP -->
+    <a href="#top" id="back-to-top"><i class="fa fa-angle-up"></i></a>
+
+    <script src="../assets/js/jquery.min.js"></script>
+    <script src="../js/summernote_es_es.js"></script>
+
+    <!-- BOOTSTRAP JS -->
+    <script src="../assets/plugins/bootstrap/js/popper.min.js"></script>
+    <script src="../assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- SPARKLINE JS-->
+    <script src="../assets/js/jquery.sparkline.min.js"></script>
+
+    <!-- CHART-CIRCLE JS-->
+    <script src="../assets/js/circle-progress.min.js"></script>
+
+    <!-- SIDE-MENU JS -->
+    <script src="../assets/plugins/sidemenu/sidemenu.js"></script>
+
+    <!-- INTERNAL SELECT2 JS -->
+    <script src="../assets/plugins/select2/select2.full.min.js"></script>
+
+    <!-- DATA TABLE JS-->
+    <script src="../assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+    <script src="../assets/plugins/datatable/js/dataTables.bootstrap5.js"></script>
+    <script src="../assets/plugins/datatable/js/dataTables.buttons.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.bootstrap5.min.js"></script>
+    <script src="../assets/plugins/datatable/js/jszip.min.js"></script>
+    <script src="../assets/plugins/datatable/pdfmake/pdfmake.min.js"></script>
+    <script src="../assets/plugins/datatable/pdfmake/vfs_fonts.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.html5.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.print.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.colVis.min.js"></script>
+    <script src="../assets/plugins/datatable/dataTables.responsive.min.js"></script>
+    <script src="../assets/plugins/datatable/responsive.bootstrap5.min.js"></script>
+    <script src="../assets/js/table-data.js"></script>
+
+    <!-- FILE UPLOADES JS -->
+    <script src="../assets/plugins/fileuploads/js/fileupload.js"></script>
+    <script src="../assets/plugins/fileuploads/js/file-upload.js"></script>
+
+    <!-- INTERNAL File-Uploads Js-->
+    <script src="../assets/plugins/fancyuploder/jquery.ui.widget.js"></script>
+    <script src="../assets/plugins/fancyuploder/jquery.fileupload.js"></script>
+    <script src="../assets/plugins/fancyuploder/jquery.iframe-transport.js"></script>
+    <script src="../assets/plugins/fancyuploder/jquery.fancy-fileupload.js"></script>
+    <script src="../assets/plugins/fancyuploder/fancy-uploader.js"></script>
+
+    <!-- SELECT2 JS -->
+    <script src="../assets/plugins/select2/select2.full.min.js"></script>
+    <script src="../assets/js/select2.js"></script>
+
+    <!-- BOOTSTRAP-DATERANGEPICKER JS -->
+    <script src="../assets/plugins/bootstrap-daterangepicker/moment.min.js?v1.0"></script>
+    <script src="../assets/plugins/bootstrap-daterangepicker/daterangepicker.js?v1.0"></script>
+
+    <!-- INTERNAL Bootstrap-Datepicker js-->
+    <script src="../assets/plugins/bootstrap-datepicker/bootstrap-datepicker.js?v1.0"></script>
+
+    <!-- INTERNAL Sumoselect js-->
+    <script src="../assets/plugins/sumoselect/jquery.sumoselect.js?v1.0"></script>
+
+    <!-- TIMEPICKER JS -->
+    <script src="../assets/plugins/time-picker/jquery.timepicker.js?v1.0"></script>
+    <script src="../assets/plugins/time-picker/toggles.min.js?v1.0"></script>
+
+    <!-- INTERNAL intlTelInput js-->
+    <script src="../assets/plugins/intl-tel-input-master/intlTelInput.js"></script>
+    <script src="../assets/plugins/intl-tel-input-master/country-select.js"></script>
+    <script src="../assets/plugins/intl-tel-input-master/utils.js"></script>
+
+    <!-- INTERNAL jquery transfer js-->
+    <script src="../assets/plugins/jQuerytransfer/jquery.transfer.js"></script>
+
+    <!-- INTERNAL multi js-->
+    <script src="../assets/plugins/multi/multi.min.js"></script>
+
+    <!-- FORMELEMENTS JS -->
+    <script src="../assets/js/formelementadvnced.js?v1.0"></script>
+    <script src="../assets/js/form-elements.js?v1.0"></script>
+
+    <!-- DATEPICKER JS -->
+    <script src="../assets/plugins/date-picker/date-picker.js?v1.0"></script>
+    <script src="../assets/plugins/date-picker/jquery-ui.js?v1.0"></script>
+    <script src="../assets/plugins/input-mask/jquery.maskedinput.js?v1.0"></script>
+
+    <!-- SIDEBAR JS -->
+    <script src="../assets/plugins/sidebar/sidebar.js?v1.0"></script>
+
+    <!-- Perfect SCROLLBAR JS-->
+    <script src="../assets/plugins/p-scroll/perfect-scrollbar.js"></script>
+    <script src="../assets/plugins/p-scroll/pscroll.js"></script>
+    <script src="../assets/plugins/p-scroll/pscroll-1.js"></script>
+
+    <!-- INTERNAL SUMMERNOTE Editor JS -->
+    <script src="../assets/plugins/summernote/summernote1.js"></script>
+    <script src="../assets/js/summernote.js"></script>
+
+    <!-- INTERNAL Notifications js -->
+    <script src="../assets/plugins/notify/js/rainbow.js"></script>
+    <script src="../assets/plugins/notify/js/sample.js?v1.0"></script>
+    <script src="../assets/plugins/notify/js/notifIt.js"></script>
+
+    <!-- Color Theme js -->
+    <script src="../assets/js/themeColors.js"></script>
+
+    <!-- Sticky js -->
+    <script src="../assets/js/sticky.js"></script>
+
+    <script src="https://cdn.datatables.net/plug-ins/1.13.1/dataRender/datetime.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.13.1/sorting/date-de.js"></script>
+
+    <!-- CUSTOM JS -->
+    <script src="../assets/js/custom.js"></script>
+
+    <link id="style" href="../assets/plugins/bootstrap/css/bootstrap.min.css?1.0" rel="stylesheet" />
+
+    <!-- STYLE CSS -->
+    <link href="../assets/css/style.css?1.0" rel="stylesheet" />
+
+    <!-- COLOR PICKER JS -->
+    <script src="../assets/plugins/pickr-master/pickr.es5.min.js"></script>
+    <script src="../assets/js/picker.js"></script>
+
+    <!-- MULTI SELECT JS-->
+    <script src="../assets/plugins/multipleselect/multiple-select.js"></script>
+    <script src="../assets/plugins/multipleselect/multi-select.js"></script>
+
+    <!-- FORMELEMENTS JS -->
+    <script src="../assets/js/formelementadvnced.js"></script>
+    <script src="../assets/js/form-elements.js"></script>
+
+    <!-- INTERNAL multi js-->
+    <script src="../assets/plugins/multi/multi.min.js"></script>
+
+
+    <!--reemplazable-->
+    <!-- Internal Chat js-->
+    <script src="../assets/js/chat.js"></script>
+
+
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

@@ -1,0 +1,434 @@
+﻿@using Microsoft.AspNetCore.Http
+@using System.Security.Claims
+
+@inject IHttpContextAccessor Accessor
+@{
+    string? email = Accessor.HttpContext.Session.GetString("emailUsuarioNoEncontrado");
+    // Obtener nombre y rol del usuario desde la sesión
+    string usuarioNombres = Accessor.HttpContext.Session.GetString("Usuario_NombresUsuario") ?? "Invitado";
+    string usuarioRol = Accessor.HttpContext.Session.GetString("Usuario_Rol") ?? "Sin Rol";
+
+    // Obtener los roles del usuario
+    var roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+    var estados = ViewBag.Estados as List<SERVICE_DESK.Models.Estado>;
+    var equipos = ViewBag.equipos as List<SERVICE_DESK.Models.equipo>;
+    var tipoConsulta = ViewBag.tipoConsulta as List<SERVICE_DESK.Models.tipoConsulta>;
+
+}
+
+@if (usuarioNombres != "Invitado")
+{
+    ViewBag.Title = "MisTickets ";
+    Layout = "~/Views/Shared/_Plantillaticketera.cshtml";
+}
+else
+{
+    ViewBag.Title = "Sin Autorización";
+    Layout = "~/Views/Shared/Error.cshtml";
+}
+
+@{
+    ViewData["Title"] = "Listado General de Tickets";
+    var tickets = ViewBag.Tickets as List<SERVICE_DESK.Models.Ticket>;
+}
+
+<style>
+    .color_Caja_correo {
+        background-color: #158c8c !important;
+        color: #fff !important;
+    }
+
+</style>
+
+
+<div class="d-none">
+    @if (TempData["mensaje"] != null)
+    {
+        <div class="@TempData["alerta"]" role="alert">
+            @TempData["mensaje"]
+        </div>
+    }
+</div>
+
+<h2>Listado General de Tickets</h2>
+
+
+
+
+
+<div class="row">
+    <div class="col-md-12 col-lg-3 col-xl-3">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Mis tickets</h3>
+            </div>
+            <div class="card-body">
+                <div class="panel-group1" id="accordion1">
+                    <div class="panel panel-default mb-4">
+                        <div class="panel-heading1" style="background-color:darkcyan!important;">
+                            <h4 class="panel-title1">
+                                <a style="background-color:darkcyan!important;" class="accordion-toggle collapsed" data-bs-toggle="collapse" data-bs-parent="#accordion" href="#collapseFour" aria-expanded="false">
+                                    Filtrar
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-expanded="false">
+                            <div class="panel-body">
+                                @using (Html.BeginForm("SearchTickets", "TicketApi", FormMethod.Get))
+                                {
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <h6 class="dropdown-header">Por Estado</h6>
+                                            <ul>
+                                                @if (ViewBag.Estados != null)
+                                                {
+                                                    foreach (var estado in ViewBag.Estados)
+                                                    {
+                                                        <li>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio" value="@estado.IdEstado" name="idEstado" id="@estado.descripcion" />
+                                                                <label class="form-check-label" for="@estado.descripcion">
+                                                                    @{
+                                                                        var estadoMostrado = estado.descripcion == "Pendiente" ? "En revisión" :
+                                                                        estado.descripcion == "Activo" ? "Revisado" :
+                                                                        estado.descripcion;
+                                                                    }
+                                                                    @Html.Raw(estadoMostrado)
+                                                                </label>
+                                                            </div>
+                                                        </li>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <li>No hay estados disponibles.</li>
+                                                }
+                                            </ul>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <h6 class="dropdown-header">Tipo de Fecha</h6>
+                                            <ul>
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" id="1" type="radio" value="1" name="tipoFecha" />
+                                                        <label class="form-check-label" for="1">Fecha Creación</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" id="2" type="radio" value="2" name="tipoFecha" />
+                                                        <label class="form-check-label" for="2">Fecha Asignación</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" id="3" type="radio" value="3" name="tipoFecha" />
+                                                        <label class="form-check-label" for="3">Fecha Cierre</label>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <div class="form-check">
+                                                <label class="form-check-label" for="fechaInicio">Fecha Inicio:</label>
+                                                <input type="date" class="form-control" name="fechaInicio" id="fechaInicio" />
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="form-check-label" for="fechaFin">Fecha Fin:</label>
+                                                <input type="date" class="form-control" name="fechaFin" id="fechaFin" />
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <div class="text-center mt-3">
+                                        <button style="background-color:darkcyan!important;" type="submit" class="btn text-white">Filtrar</button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-md-12 col-lg-9 col-xl-9">
+        <!--tamaño-->
+        <div class="main-container container-fluid">
+            <div class="row row-sm">
+
+                <!-- CONTAINER -->
+                <div class="main-container container-fluid">
+                    <div class="row row-sm">
+                        <div class="col-lg-12">
+                            <div class="card">
+
+
+                                <div class="card-header d-flex justify-content-between">
+                                    <h4 class="fw-bolder">Listado Personal de Tickets</h4>
+                                  
+
+
+                                </div>
+
+
+
+
+
+
+
+
+                                <div class="card-body">
+                                    <div class="table-responsive">
+
+                                        <table class="table table-xs table-hover" id="dataTableTickets">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Fecha Generación</th>
+                                                    <th>Asunto</th>
+                                                    <th>Equipo</th>
+                                                    <th>Tipo Consulta</th>
+                                                    <th>Fecha Asignación</th>
+                                                    <th>ID Estado</th>
+                                                    <th>Fecha Cierre</th>
+                                                    <th>Revisar</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (ViewBag.Tickets != null)
+                                                {
+                                                    @foreach (var ticket in ViewBag.Tickets)
+                                                    {
+                                                        <tr>
+                                                            <td class="td-ellipsis td-sistema" title="@ticket.IdTicket">
+                                                                <h6 class="fw-bold"><i class="zmdi zmdi-ticket-star"></i>[ @ticket.IdTicket]</h6>
+                                                            </td>
+                                                            <td>
+                                                                @if (ticket.fechaGeneracion != null)
+                                                                {
+                                                                    @ticket.fechaGeneracion.ToString("dd/MM/yyyy")
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span>N/A</span>
+                                                                }
+                                                            </td>
+                                                            <td class="td-ellipsis td-sistema" title="@ticket.asunto">
+
+                                                                @if (ticket.asunto != null)
+                                                                {
+                                                                    @ticket.asunto
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span>N/A</span>
+                                                                }
+
+                                                            </td>
+                                                            <td>
+                                                                <select name="Equipo" id="@("cboequipos_" + ticket.IdTicket)" disabled class="form-control form-select">
+                                                                    <option value="0">--Seleccione--</option>
+                                                                    @if (ViewBag.Equipos != null)
+                                                                    {
+                                                                        @foreach (var equipo in ViewBag.Equipos)
+                                                                        {
+                                                                            <option value="@equipo.idEquipo" selected="@(ticket.equipo == equipo.idEquipo)">
+                                                                                @equipo.descripcion
+                                                                            </option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </td>
+                                                            <td>
+                                                                <select name="TipoConsulta" id="@("cboconsulta_" + ticket.IdTicket)" disabled class="form-control form-select">
+                                                                    <option value="0">--Seleccione--</option>
+                                                                    @if (ViewBag.TipoConsulta != null)
+                                                                    {
+                                                                        @foreach (var consulta in ViewBag.TipoConsulta)
+                                                                        {
+                                                                            <option value="@consulta.idTipoConsulta" selected="@(ticket.tipoConsulta == consulta.idTipoConsulta)">
+                                                                                @consulta.descripcion
+                                                                            </option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </td>
+                                                            <td>
+                                                                @if (ticket.fechaAsignacion != null)
+                                                                {
+                                                                    @ticket.fechaAsignacion?.ToString("dd/MM/yyyy")
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span>N/A</span>
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                <select name="IdEstado" id="@("cboEstado_" + ticket.IdTicket)" disabled class="form-control form-select">
+                                                                    <option value="0">--Seleccione--</option>
+                                                                    @if (ViewBag.Estados != null)
+                                                                    {
+                                                                        @foreach (var estado in ViewBag.Estados)
+                                                                        {
+                                                                            <option value="@estado.IdEstado" selected="@(ticket.idEstado == estado.IdEstado)">
+                                                                                @estado.descripcion
+                                                                            </option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </td>
+                                                            <td>
+                                                                @if (ticket.fechaCierre != null)
+                                                                {
+                                                                    @ticket.fechaCierre?.ToString("dd/MM/yyyy")
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span>N/A</span>
+                                                                }
+                                                            </td>
+                                                            <td class="text-center td-sistema">
+                                                                @{
+                                                                    // Construir la URL manualmente
+                                                                    string abrirTicketUrl = $"/TicketAPI/AbrirTicket?id={ticket.IdTicket}";
+                                                                }
+                                                                <a href="@abrirTicketUrl" type="button" class="boton boton-black" style="max-height:35px!important;">
+                                                                    Abrir
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+
+@section Scripts {
+    <a href="~/Adjuntos/BundleConfig.cs"></a>
+
+    <script src="~/assets/js/summernote_es_es.js"></script>
+    <script src="~/assets/plugins/select2/select2.full.min.js"></script>
+    <script src="~/assets/js/Script.js"></script>
+    <script src="~/assets/js/sweet-alert.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="~/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#summernote').summernote('destroy');
+
+            $('#summernote').summernote({
+                lang: 'es-ES', // Configura el idioma español
+                tabsize: 2,
+                height: 80,
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'clear']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'help']] // Eliminamos 'codeview' de la barra de herramientas
+                ],
+                callbacks: {
+                    onImageUpload: function (files) {
+                        for (let i = 0; files && i < files.length; i++) {
+                            const reader = new FileReader();
+                            reader.onload = function (e) {
+                                const dataUrl = e.target.result;
+                                $('#summernote').summernote('insertImage', dataUrl);
+                            };
+                            reader.readAsDataURL(files[i]);
+                        }
+                    },
+                    onDialogHidden: function (dialog) {
+                        const dialogType = $(dialog).find('.note-image-dialog, .note-link-dialog, .note-video-dialog').length > 0 ?
+                            ($(dialog).find('.note-image-dialog').length > 0 ? 'image' : ($(dialog).find('.note-link-dialog').length > 0 ? 'link' : 'video')) :
+                            null;
+
+                        if (!dialogType && !$('.modal-dialog').hasClass('show')) {
+                            $('body').addClass('modal-open');
+                        }
+                    }
+                }
+            });
+
+            // Agregar evento para restablecer la clase modal-open al body cuando se cierra el modal
+            $('#extralargemodal').on('hidden.bs.modal', function () {
+                if (!$('.modal-dialog').hasClass('show')) {
+                    $('body').addClass('modal-open');
+                }
+            });
+        });
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            if ($.fn.DataTable.isDataTable('#dataTableTickets')) {
+                $('#dataTableTickets').DataTable().destroy();
+            }
+            $('#dataTableTickets').DataTable({
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay Tickets",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Tickets",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 Tickets",
+                    "infoFiltered": "(Filtrado de _MAX_ total de Tickets)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Tickets",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "No se encontrarón tickets",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+        });
+
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+            var mensaje = "@(TempData["mensaje"])";
+            // Verifica si TempData["mensaje"] no es nulo ni está vacío
+            if (mensaje && mensaje.trim() !== "") {
+                notif({
+                    msg: mensaje,
+                    type: "success",
+                    opacity: 1,
+                    autohide: true
+                });
+            }
+
+
+
+
+        });
+    </script>
+}
