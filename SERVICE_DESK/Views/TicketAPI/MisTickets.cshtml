@@ -317,8 +317,8 @@ else
                                                     @foreach (var ticket in ViewBag.Tickets)
                                                     {
                                                         <tr>
-                                                            <td class="td-ellipsis td-sistema" title="@ticket.IdTicket">
-                                                                <h6 class="fw-bold"><i class="zmdi zmdi-ticket-star"></i>[ @ticket.IdTicket]</h6>
+                                                            <td class="td-ellipsis td-sistema" title="@ticket.idTicket">
+                                                                <h6 class="fw-bold"><i class="zmdi zmdi-ticket-star"></i>[ @ticket.idTicket]</h6>
                                                             </td>
                                                             <td>
                                                                 @if (ticket.fechaGeneracion != null)
@@ -343,7 +343,7 @@ else
 
                                                             </td>
                                                             <td>
-                                                                <select name="Equipo" id="@("cboequipos_" + ticket.IdTicket)" disabled class="form-control form-select">
+                                                                <select name="Equipo" id="@("cboequipos_" + ticket.idTicket)" disabled class="form-control form-select">
                                                                     <option value="0">--Seleccione--</option>
                                                                     @if (ViewBag.Equipos != null)
                                                                     {
@@ -357,7 +357,7 @@ else
                                                                 </select>
                                                             </td>
                                                             <td>
-                                                                <select name="TipoConsulta" id="@("cboconsulta_" + ticket.IdTicket)" disabled class="form-control form-select">
+                                                                <select name="TipoConsulta" id="@("cboconsulta_" + ticket.idTicket)" disabled class="form-control form-select">
                                                                     <option value="0">--Seleccione--</option>
                                                                     @if (ViewBag.TipoConsulta != null)
                                                                     {
@@ -381,7 +381,7 @@ else
                                                                 }
                                                             </td>
                                                             <td>
-                                                                <select name="IdEstado" id="@("cboEstado_" + ticket.IdTicket)" disabled class="form-control form-select">
+                                                                <select name="IdEstado" id="@("cboEstado_" + ticket.idTicket)" disabled class="form-control form-select">
                                                                     <option value="0">--Seleccione--</option>
                                                                     @if (ViewBag.Estados != null)
                                                                     {
@@ -407,7 +407,7 @@ else
                                                             <td class="text-center td-sistema">
                                                                 @{
                                                                     // Construir la URL manualmente
-                                                                    string abrirTicketUrl = $"/TicketAPI/AbrirTicket?id={ticket.IdTicket}";
+                                                                    string abrirTicketUrl = $"/TicketAPI/AbrirTicket?id={ticket.idTicket}";
                                                                 }
                                                                 <a href="@abrirTicketUrl" type="button" class="boton boton-black" style="max-height:35px!important;">
                                                                     Abrir
@@ -532,22 +532,25 @@ else
     </script>
 
 
-<script>
-    $(document).ready(function () {
-        var mensaje = "@(TempData["mensaje"])";
-        // Verifica si TempData["mensaje"] no es nulo ni está vacío
-        if (mensaje && mensaje.trim() !== "") {
-            notif({
-                msg: mensaje,
-                type: "success",
-                opacity: 1,
-                autohide: true
-            });
-        }
+    <script>
+        $(document).ready(function () {
+            var mensaje = "@TempData["mensaje"]";
+            var mensajeTipo = "@TempData["mensajeTipo"]"; // tipo de mensaje: "success" o "error"
 
+            // Verifica si TempData["mensaje"] no es nulo ni está vacío
+            if (mensaje && mensaje.trim() !== "") {
+                if (mensajeTipo === "success") {
+                    notif({
+                        msg: mensaje,
+                        type: "success",
+                        opacity: 1,
+                        autohide: true
+                    });
+                } else if (mensajeTipo === "error") {
+                    alert(mensaje);
+                }
+            }
+        });
+    </script>
 
-
-
-    });
-</script>
 }

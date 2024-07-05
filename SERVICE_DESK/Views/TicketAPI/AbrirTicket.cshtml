@@ -140,7 +140,7 @@ else
                     <!--cuerpo del formulario-->
                     <div class="modal-body bg-white" style="margin-top:0!important;">
                         <div class="cuerpo col col-lg-12 bg-white">
-                            <form id="updateTicketForm" class="col col-lg-12" style="display:flex;justify-content:center;flex-direction:column;padding-bottom:0!important;" enctype="multipart/form-data" onsubmit="submitForm(event)">
+                            <form asp-action="ActualizarTicket" method="post">
                                 <h1 class="text-center">Formulario de Ticket</h1>
                                 <div class="col col-lg-12 bg-white">
                                     <div class="progressbar">
@@ -148,32 +148,18 @@ else
                                         <div class="progress-step" data-title="Contenido"></div>
                                     </div>
                                     <div class="form-step form-step-active col col-lg-12">
-                                        <div class="col-lg-6" style="display:none;">
-                                            <div class="form-group">
-                                                <label class="form-label">Emisor <span class="text-red">*</span></label>
-                                                <input type="text" class="form-control" id="emisor" placeholder="Emisor" name="emisor" value="pruebas" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-12">
-                                            <div class="form-group">
-                                                <div class="card-header">
-                                                    <h3 class="card-title">
-                                                        Asunto del ticket: <span>@ticket.asunto</span>
-                                                    </h3>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <input type="hidden" value="@ticket.IdTicket" name="IdTicket">
-                                        <input type="hidden" value="@ticket.fechaGeneracion" name="fechaGeneracion">
-                                        <input type="hidden" value="@ticket.fechaAsignacion" name="fechaAsignacion">
-                                        <input type="hidden" value="@DateTime.Now.ToString("dd/MM/yyyy")" name="fechaCierre">
-                                        <input type="hidden" value="@ticket.asunto" name="asunto">
-                                        <input type="hidden" value="@ticket.cuerpoTicket" name="cuerpoTicket">
-                                        <input type="hidden" value="@ticket.correoEmisor" name="correoEmisor">
-                                        <input type="hidden" value="@ticket.correoReceptor" name="correoReceptor">
-                                        <input type="hidden" value="@ticket.idEstado" name="idEstado">
-                                        <input type="hidden" value="@ticket.equipo" name="equipo">
-                                        <input type="hidden" value="@ticket.tipoConsulta" name="tipoConsulta">
+                                        <!-- Campos ocultos y otros campos necesarios -->
+                                        <input type="text" value="@ticket.idTicket" name="idTicket">
+                                        <input type="text" value="@ticket.fechaGeneracion.ToString("dd/MM/yyyy")" name="fechaGeneracion">
+                                        <input type="text" value="@ticket.fechaAsignacion" name="fechaAsignacion">
+                                        <input type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")" name="fechaCierre">
+                                        <input type="text" value="@ticket.asunto" name="asunto">
+                                        <input type="text" value="@ticket.cuerpoTicket" name="cuerpoTicket">
+                                        <input type="text" value="@ticket.correoEmisor" name="correoEmisor">
+                                        <input type="text" value="@ticket.correoReceptor" name="correoReceptor">
+                                        <input type="text" value="@ticket.idEstado" name="idEstado">
+                                        <input type="text" value="@ticket.equipo" name="equipo">
+                                        <input type="text" value="@ticket.tipoConsulta" name="tipoConsulta">
                                     </div>
                                     <div id="sweet-alert" style="position:relative"></div>
                                     <div class="form-step">
@@ -183,12 +169,12 @@ else
                                                     <h3 class="card-title">Mensaje <span class="text-red">*</span></h3>
                                                 </div>
                                                 <div class="card-body">
-                                                    <textarea id="summernote" name="Contenido"></textarea>
+                                                    <textarea id="summernote" name="respuestaTicket"></textarea>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="btns-group">
-                                            <button type="button" onclick="submitForm(event)" class="btn btn-secondary btn-lg">EnviarTicket</button>
+                                            <button type="submit" class="btn btn-secondary btn-lg">Enviar Ticket</button>
                                         </div>
                                     </div>
                                 </div>
@@ -212,16 +198,15 @@ else
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="fw-bold"> <i class="zmdi zmdi-ticket-star   "></i> Asunto [ @ticket.IdTicket]:  @ticket.asunto</h4>
+                        <h4 class="fw-bold"> <i class="zmdi zmdi-ticket-star   "></i> Asunto [ @ticket.idTicket]:  @ticket.asunto</h4>
                 </div>
                 <div class="card-block">
                     <div class="table-responsive">
 
-                            <form action="@Url.Action("UpdateTicket", "TicketAPI")"  method="post" >
+                            <form asp-action="ActualizarTicket" method="post">
 
 
                         <table class="table w-100">
-                            <input type="hidden" name="IdTicket" value="@ticket.IdTicket" />
                             <tr>
                                 <td class="td-detalle">Fecha Generación:</td>
                                 <td class="td-detalle">
@@ -239,19 +224,22 @@ else
                                 <td class="td-sistema">Responsable:</td>
 
 
-                                <div class="d-none">
-                                            <input type="hidden" value="@ticket.IdTicket" name="IdTicket">
-                                            <input type="hidden" value="@ticket.fechaGeneracion" name="fechaGeneracion">
-                                            <input type="hidden" value="@ticket.fechaAsignacion" name="fechaAsignacion">
-                                            <input type="hidden" value="@ticket.fechaCierre" name="fechaCierre">
-                                            <input type="hidden" value="@ticket.asunto" name="asunto">
-                                            <input type="hidden" value="@ticket.cuerpoTicket" name="cuerpoTicket">
-                                            <input type="hidden" value="@ticket.correoEmisor" name="correoEmisor">
+                                <div class="d-initial">
+                                            <input type="text" value="@ticket.idTicket" name="idTicket">
+                                            <input type="text" value="@ticket.fechaGeneracion.ToString("dd/MM/yyyy")" name="fechaGeneracion">
+                                            <input type="text" value="@ticket.fechaAsignacion" name="fechaAsignacion">
+                                            <input type="text" value="@ticket.fechaCierre" name="fechaCierre">
+                                            <input type="text" value="@ticket.asunto" name="asunto">
+                                            <input type="text" value="@ticket.cuerpoTicket" name="cuerpoTicket">
+                                            <input type="text" value="@ticket.respuestaTicket" name="respuestaTicket">
+                                            <input type="text" value="@ticket.correoEmisor" name="correoEmisor">
+                                            <input type="text" value="@ticket.equipo" name="equipo">
+                                            <input type="text" value="@ticket.tipoConsulta" name="tipoConsulta">
                                 </div>
 
 
                                 <td class="td-detalle">
-                                    <select name="IdEstado" id="@("cboresponsable_" + ticket.IdTicket)" class="form-control  form-select">
+                                            <select name="correoReceptor" id="@("cboresponsable_" + ticket.idTicket)" class="form-control  form-select">
                                         <option value="0">--Seleccione--</option>
                                         @foreach (var estado in responsables)
                                         {
@@ -263,7 +251,7 @@ else
                                 </td>
                                 <td class="td-sistema">Equipo:</td>
                                 <td class="td-detalle">
-                                    <select name="IdEstado"   id="@("cboEstado_" + ticket.IdTicket)" class="form-control  form-select">
+                                            <select  id="@("cboEquipo_" + ticket.idTicket)" class="form-control  form-select">
                                         <option value="0">--Seleccione--</option>
                                         @foreach (var estado in equipos)
                                         {
@@ -276,7 +264,7 @@ else
 
                                 <td class="td-sistema">tipoConsulta:</td>
                                 <td class="td-detalle">
-                                    <select name="IdEstado" id="@("cboconsulta_" + ticket.IdTicket)" class="form-control  form-select">
+                                            <select  id="@("cboconsulta_" + ticket.idTicket)" class="form-control  form-select">
                                         <option value="0">--Seleccione--</option>
                                         @foreach (var estado in tipoConsulta)
                                         {
@@ -294,16 +282,7 @@ else
 
 
 
-                                <div class="col-lg-6" style="display:none">
-
-                                    <div style="display:flex;gap:30px;">
-                                        <input id="prioridad" name="IdPrioridad" />
-                                    </div>
-                                    <div style="display:flex;gap:30px;">
-                                        <input type="text" name="categoria" id="categoria" />
-                                        <input type="text" name="subcategoria" id="subcategoria" />
-                                    </div>
-                                </div>
+                              
 
                             </tr>
 
@@ -315,11 +294,11 @@ else
                             <tr>
                                 <td class="td-sistema">Estado:</td>
                                 <td class="td-detalle">
-                                    <select name="IdEstado" id="@("cboEstado_" + ticket.IdTicket)" class="form-control  form-select">
+                                            <select name="idEstado" id="@("cboEstado_" + ticket.idTicket)" class="form-control  form-select">
                                         <option value="0">--Seleccione--</option>
                                         @foreach (var estado in estados)
                                         {
-                                            <option value="@estado.IdEstado" selected="@(ticket.IdTicket == estado.IdEstado)">
+                                                    <option value="@estado.IdEstado" selected="@(ticket.idEstado == estado.IdEstado)">
                                                 @estado.descripcion
                                             </option>
                                         }
@@ -328,9 +307,8 @@ else
 
                                 <td>Usuario: </td>
                                 <td>
-                                    <input type="text" class="form-control form-control-sm" name="Propietario" value="@ticket.correoEmisor" />
                                 </td>
-                                <td><input type="submit" name="" id="editar" value="Aceptar" class="boton boton-enviaTicket btn-lg" onclick="actualizarTicket('@ticket.IdTicket')" /></td>
+                                        <td><input type="submit" name="" id="editar" value="Aceptar" class="boton boton-enviaTicket btn-lg" /></td>
 
 
                             </tr>
@@ -379,7 +357,7 @@ else
 
                                     @if (usuarioRol == "Responsable")
                                     {
-                                        <a class="text-white" href="@(Url.Action("MisTicketsAsignados", "Ticket"))">Regresar al inicio</a>
+                                        <a class="text-white" href="@(Url.Action("MisTicketsAsignados", "TicketAPI"))">Regresar al inicio</a>
 
                                     }
                                     @if (usuarioRol == "Administrador")
@@ -522,33 +500,25 @@ else
 
 
     <script>
-        async function submitForm(event) {
-            event.preventDefault(); // Evitar el envío tradicional del formulario
-            const form = document.getElementById('updateTicketForm');
-            const data = new FormData(form);
-            const json = JSON.stringify(Object.fromEntries(data.entries()));
+        $(document).ready(function () {
+            var mensaje = "@TempData["mensaje"]";
+            var mensajeTipo = "@TempData["mensajeTipo"]"; // tipo de mensaje: "success" o "error"
 
-            try {
-                const response = await fetch('@Url.Action("UpdateTicket", "TicketAPI")', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: json
-                });
-
-                if (response.ok) {
-                    window.location.href = '@Url.Action("MisTickets", "TicketAPI")';
-                } else {
-                    const errorText = await response.text();
-                    alert('Error al actualizar el ticket: ' + errorText);
+            // Verifica si TempData["mensaje"] no es nulo ni está vacío
+            if (mensaje && mensaje.trim() !== "") {
+                if (mensajeTipo === "success") {
+                    notif({
+                        msg: mensaje,
+                        type: "success",
+                        opacity: 1,
+                        autohide: true
+                    });
+                } else if (mensajeTipo === "error") {
+                    alert(mensaje);
                 }
-            } catch (error) {
-                alert('Error al procesar la solicitud: ' + error.message);
             }
-        }
+        });
     </script>
-
 <!---->
 }
 

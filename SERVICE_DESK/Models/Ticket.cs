@@ -8,7 +8,7 @@ namespace SERVICE_DESK.Models
 {
     public class Ticket
     {
-        public int IdTicket { get; set; }
+        public int idTicket { get; set; }
         public DateTime fechaGeneracion { get; set; }
         public DateTime? fechaAsignacion { get; set; }
         public DateTime? fechaCierre { get; set; }

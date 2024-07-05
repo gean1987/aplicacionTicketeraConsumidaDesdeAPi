@@ -62,6 +62,8 @@ namespace SERVICE_DESK.Controllers
             }
             return View();
         }
+
+
         //vistaEmisor
         public async Task<IActionResult> MisTickets()
         {
@@ -120,6 +122,7 @@ namespace SERVICE_DESK.Controllers
             return View();
         }
 
+        //abrir ticket por id
         public async Task<IActionResult> AbrirTicket(int id)
         {
             // Llamar al endpoint con el ID del ticket
@@ -201,7 +204,7 @@ namespace SERVICE_DESK.Controllers
             return View();
         }
 
-        //grabar
+        //metodo para crear
         [HttpPost]
         public async Task<IActionResult> AddTicket(Ticket ticket)
         {
@@ -209,10 +212,7 @@ namespace SERVICE_DESK.Controllers
 
             try
             {
-
-
-                // Configurar los datos necesarios antes de enviar la solicitud
-                //ticket.Asunto;
+                
                 ticket.fechaGeneracion = DateTime.Now;
                 ticket.fechaAsignacion = null; // Puedes ajustar según tu lógica
                 ticket.fechaCierre = null; // Puedes ajustar según tu lógica
@@ -220,9 +220,7 @@ namespace SERVICE_DESK.Controllers
                 ticket.correoEmisor = condicionEmail;
                 //ticket.equipo;
                 ticket.idEstado =1;
-                //ticket.tipoConsulta;
-                //ticket.cuerpoTicket;
-                //ticket.respuestaTicket;
+               
 
                 var json = JsonConvert.SerializeObject(ticket);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -250,46 +248,54 @@ namespace SERVICE_DESK.Controllers
                 return RedirectToAction("MisTickets", "TicketAPI");
             }
         }
-
-
-        [HttpPut]
-        public async Task<IActionResult> UpdateTicket([FromBody] Ticket ticket)
+        //metodo para insertar
+        [HttpPost]
+        public async Task<IActionResult> ActualizarTicket(Ticket ticket)
         {
             try
             {
+                // Ajusta la fecha de cierre según tu lógica
+                ticket.fechaCierre = DateTime.Now;
+
+                // Serializa el objeto Ticket a JSON
                 var json = JsonConvert.SerializeObject(ticket);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
+                // Realiza la solicitud PUT al endpoint correcto
                 var response = await _httpClient.PutAsync("ticket", content);
+
+                string redirectUrl = $"https://localhost:7162/TicketAPI/AbrirTicket?id={ticket.idTicket}";
 
                 if (response.IsSuccessStatusCode)
                 {
-                    TempData["SuccessMessage"] = "El ticket se ha actualizado correctamente.";
-                    return RedirectToAction("MisTickets", "TicketAPI");
+                    TempData["mensaje"] = "El ticket se ha actualizado correctamente.";
+                    TempData["mensajeTipo"] = "success";
+                    return Redirect(redirectUrl);
                 }
                 else
                 {
-                    var errorMessage = await response.Content.ReadAsStringAsync();
-                    TempData["ErrorMessage"] = "Error al actualizar el ticket: " + errorMessage;
-                    return RedirectToAction("MisTickets", "TicketAPI");
+                    TempData["mensaje"] = "Error al actualizar el ticket: " + response.ReasonPhrase;
+                    TempData["mensajeTipo"] = "error";
+                    return Redirect(redirectUrl);
                 }
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Error al procesar la solicitud: " + ex.Message;
-                return RedirectToAction("MisTickets", "TicketAPI");
+                TempData["mensaje"] = "Error al procesar la solicitud: " + ex.Message;
+                TempData["mensajeTipo"] = "error";
+                return RedirectToAction(nameof(AbrirTicket), new { id = ticket.idTicket });
             }
         }
 
 
+       
 
 
 
 
 
 
-
-
+        //filtrado de ticket
         [HttpGet]
         public async Task<IActionResult> SearchTickets(int idEstado, int tipoFecha, DateTime fechaInicio, DateTime fechaFin)
         {
