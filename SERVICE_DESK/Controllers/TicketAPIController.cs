@@ -338,6 +338,8 @@ namespace SERVICE_DESK.Controllers
                     var responseData = await response.Content.ReadAsStringAsync();
                     var createdTicket = JsonConvert.DeserializeObject<Ticket>(responseData);
                     TempData["mensaje"] = "El ticket se ha actualizado correctamente.";
+                    TempData["mensajeTipo"] = "success";
+
                     EnviarCorreoElectronico("Hay un nuevo ticket de asunto:", ticket.asunto, ticket.cuerpoTicket, "SERVICEDESKLogistica@outlook.com", enlace);
 
                     return RedirectToAction("MisTickets", "TicketAPI");
