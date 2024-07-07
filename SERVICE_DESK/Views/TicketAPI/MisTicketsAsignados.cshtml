@@ -178,7 +178,7 @@ else
                                 <div class="card-body">
                                     <div class="table-responsive">
 
-                                        <table class="table table-xs table-hover" id="dataTableTickets">
+                                        <table id="file-datatable" class="table table-bordered text-nowrap key-buttons border-bottom">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
@@ -333,6 +333,45 @@ else
 
     <script>
         $(document).ready(function () {
+            // Verificar si DataTable ya está inicializado y destruirlo si es necesario
+            if ($.fn.DataTable.isDataTable('#file-datatable2')) {
+                $('#file-datatable2').DataTable().destroy();
+            }
+
+            // Inicializar el DataTable con las opciones y el idioma personalizado
+            $('#file-datatable2').DataTable({
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay Tickets",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Tickets",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 Tickets",
+                    "infoFiltered": "(Filtrado de _MAX_ total de Tickets)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Tickets",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "No se encontraron tickets",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                },
+                // Habilitar los botones de exportación y configurar opciones adicionales si es necesario
+                buttons: [
+                    'copy', 'excel', 'pdf', 'print'
+                ]
+            });
+        });
+    </script>
+
+
+
+    <script>
+        $(document).ready(function () {
             $('#summernote').summernote('destroy');
 
             $('#summernote').summernote({
@@ -381,36 +420,7 @@ else
 
     </script>
 
-    <script>
-        $(document).ready(function () {
-            if ($.fn.DataTable.isDataTable('#dataTableTickets')) {
-                $('#dataTableTickets').DataTable().destroy();
-            }
-            $('#dataTableTickets').DataTable({
-                language: {
-                    "decimal": "",
-                    "emptyTable": "No hay Tickets",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Tickets",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 Tickets",
-                    "infoFiltered": "(Filtrado de _MAX_ total de Tickets)",
-                    "infoPostFix": "",
-                    "thousands": ",",
-                    "lengthMenu": "Mostrar _MENU_ Tickets",
-                    "loadingRecords": "Cargando...",
-                    "processing": "Procesando...",
-                    "search": "Buscar:",
-                    "zeroRecords": "No se encontrarón tickets",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
-                }
-            });
-        });
-
-    </script>
+   
 
 
     <script>

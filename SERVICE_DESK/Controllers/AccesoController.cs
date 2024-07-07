@@ -47,15 +47,15 @@ namespace SERVICE_DESK.Controllers
                     // Procesar la lógica de autenticación como lo hacías antes
                     string rolUsuario;
 
-                    if (usuario[0].Rol != null && usuario[0].Rol.Contains("Administrador"))
+                    if (usuario[0].rol != null && usuario[0].rol.Contains("Administrador"))
                     {
                         rolUsuario = "Administrador";
                     }
-                    else if (usuario[0].Rol != null && usuario[0].Rol.Contains("Emisor"))
+                    else if (usuario[0].rol != null && usuario[0].rol.Contains("Emisor"))
                     {
                         rolUsuario = "Emisor";
                     }
-                    else if (usuario[0].Rol != null && usuario[0].Rol.Contains("Receptor"))
+                    else if (usuario[0].rol != null && usuario[0].rol.Contains("Receptor"))
                     {
                         rolUsuario = "Receptor";
                     }
@@ -67,9 +67,9 @@ namespace SERVICE_DESK.Controllers
                     var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, usuario[0].nombre),
-                        new Claim(ClaimTypes.NameIdentifier, usuario[0].IdUsuario.ToString()),
+                        new Claim(ClaimTypes.NameIdentifier, usuario[0].idUsuario.ToString()),
                         new Claim(ClaimTypes.Email, usuario[0].correo),
-                        new Claim(ClaimTypes.Role, usuario[0].Rol)
+                        new Claim(ClaimTypes.Role, usuario[0].rol)
                     };
 
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

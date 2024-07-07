@@ -1,0 +1,50 @@
+﻿@using System.IO;
+@using Microsoft.AspNetCore.Http;
+@using System.Security.Claims;
+
+@inject IHttpContextAccessor Accessor
+@{
+    string? email = Accessor.HttpContext.Session.GetString("emailUsuarioNoEncontrado");
+    // Obtener nombre y rol del usuario desde la sesión
+    string usuarioNombres = Accessor.HttpContext.Session.GetString("Usuario_NombresUsuario") ?? "Invitado";
+    string usuarioRol = Accessor.HttpContext.Session.GetString("Usuario_Rol") ?? "Sin Rol";
+
+    // Obtener los roles del usuario
+    var roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+
+    var data = ViewBag.equipos as SERVICE_DESK.Models.equipo;
+}
+
+@if (usuarioNombres != "Invitado")
+{
+    ViewBag.Title = "Revisar Tickets";
+    Layout = "~/Views/Shared/_Plantillaticketera.cshtml";
+}
+else
+{
+    ViewBag.Title = "Sin Autorización";
+    Layout = "~/Views/Shared/Error.cshtml";
+}
+
+<div class="d-none">
+    @if (TempData["mensaje"] != null)
+    {
+        <div class="@TempData["alerta"]" role="alert">
+            @TempData["mensaje"]
+        </div>
+    }
+</div>
+
+<h1 class="text-red">EliminarDatosequipo</h1>
+
+<form method="post" action="/MantenimientoEquipo/Eliminarequipo">
+    <input type="hidden" value="@data.idEquipo" name="id" /> <!-- Cambiado a type="hidden" y name="id" -->
+
+    <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">descripcion: @data.descripcion</label>
+    </div>
+ 
+  
+
+    <button type="submit" class="btn btn-primary">Eliminar equipo</button>
+</form>

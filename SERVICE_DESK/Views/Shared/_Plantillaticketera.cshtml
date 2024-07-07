@@ -225,7 +225,7 @@
                         @if (usuarioRol == "Administrador" && usuarioRol != "Sin Rol")
                         {
 
-                            <a class="header-brand1 d-flex flex-column gap-2" href="@(Url.Action("Listado", "Ticket"))">
+                            <a class="header-brand1 d-flex flex-column gap-2" href="@(Url.Action("ListadoGeneral", "TicketAPI"))">
                                 <img src="../assets/images/brand/ordenador-personal.png" class="d-inline-block align-top" width="70" height="70" alt="logo">
                                 <span class="text-white mt-2">Logitech mesa de servicio</span>
                             </a>
@@ -235,7 +235,7 @@
 
                         else if (usuarioRol =="Emisor" && usuarioRol != "Sin Rol")
                         {
-                            <a class="header-brand1 d-flex flex-direction-column gap-2" href="@(Url.Action("MisTickets", "Ticket"))">
+                            <a class="header-brand1 d-flex flex-direction-column gap-2" href="@(Url.Action("MisTickets", "TicketAPI"))">
                                 <img src="../assets/images/brand/ordenador-personal.png" class="d-inline-block align-top" width="70" height="70" alt="logo">
                                 <span class="text-white mt-2">Logitech mesa de servicio</span>
 
@@ -244,7 +244,7 @@
 
                         else if (usuarioRol == "Responsable" && usuarioRol != "Sin Rol")
                         {
-                            <a class="header-brand1 d-flex flex-direction-column gap-2" href="@(Url.Action("MisTicketsAsignados", "Ticket"))">
+                            <a class="header-brand1 d-flex flex-direction-column gap-2" href="@(Url.Action("MisTicketsAsignados", "TicketAPI"))">
                                 <img src="../assets/images/brand/ordenador-personal.png" class="d-inline-block align-top" width="70" height="70" alt="logo">
                                 <span class="text-white mt-2">Logitech mesa de servicio</span>
 
@@ -263,22 +263,28 @@
                             </a>
                         }
                     </a>
+@if (usuarioRol == "Administrador" && usuarioRol != "Sin Rol")
+                    {
+                        <div class="d-flex gap-2">
+                            <a class="header-brand1 d-flex flex-direction-column gap-2 btn bg-white text-black" href="@(Url.Action("ListadoGeneral", "TicketAPI"))">
+                                Volver al listado
+                            </a>
+                            <a class="header-brand1 d-flex flex-direction-column gap-2 btn btn-success" href="@(Url.Action("Listadoequipos", "MantenimientoEquipo"))">
+                                MantenimientoEquipo
+                            </a>
 
-                    <a class="header-brand1 d-flex flex-direction-column gap-2 btn btn-success" href="@(Url.Action("Index", "Home"))">
-                        MantenimientoAparato
-                   </a>
 
-
-                    <a class="header-brand1 d-flex flex-direction-column gap-2 btn btn-warning" href="@(Url.Action("Index", "Home"))">
-                        MantenimientoTipoConsulta
-                    </a>
+                            <a class="header-brand1 d-flex flex-direction-column gap-2 btn btn-warning" href="@(Url.Action("ListadotipoConsulta", "MantenimientoTipoConsulta"))">
+                                MantenimientoTipoConsulta
+                            </a>
 
 
 
-                    <a class="header-brand1 d-flex flex-direction-column gap-2 btn btn-info" href="@(Url.Action("Listado", "Usuario"))">
-                        MantenimientoUsuario
-                    </a>
-
+                            <a class="header-brand1 d-flex flex-direction-column gap-2 btn btn-info" href="@(Url.Action("ListadoUsuarios", "MantenimientoUsuario"))">
+                                MantenimientoUsuario
+                            </a>
+                        </div>
+                    }
 
 
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

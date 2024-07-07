@@ -147,19 +147,19 @@ else
                                         <div class="progress-step progress-step-active" data-title="Detalle"></div>
                                         <div class="progress-step" data-title="Contenido"></div>
                                     </div>
-                                    <div class="form-step form-step-active col col-lg-12">
+                                    <div class="form-step form-step-active  col col-lg-12">
                                         <!-- Campos ocultos y otros campos necesarios -->
-                                        <input type="text" value="@ticket.idTicket" name="idTicket">
-                                        <input type="text" value="@ticket.fechaGeneracion.ToString("dd/MM/yyyy")" name="fechaGeneracion">
-                                        <input type="text" value="@ticket.fechaAsignacion" name="fechaAsignacion">
-                                        <input type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")" name="fechaCierre">
-                                        <input type="text" value="@ticket.asunto" name="asunto">
-                                        <input type="text" value="@ticket.cuerpoTicket" name="cuerpoTicket">
-                                        <input type="text" value="@ticket.correoEmisor" name="correoEmisor">
-                                        <input type="text" value="@ticket.correoReceptor" name="correoReceptor">
-                                        <input type="text" value="@ticket.idEstado" name="idEstado">
-                                        <input type="text" value="@ticket.equipo" name="equipo">
-                                        <input type="text" value="@ticket.tipoConsulta" name="tipoConsulta">
+                                        <input type="hidden" value="@ticket.idTicket" name="idTicket">
+                                        <input type="hidden" value="@ticket.fechaGeneracion.ToString("dd/MM/yyyy")" name="fechaGeneracion">
+                                        <input type="hidden" value="@ticket.fechaAsignacion" name="fechaAsignacion">
+                                        <input type="hidden" value="@DateTime.Now.ToString("dd/MM/yyyy")" name="fechaCierre">
+                                        <input type="hidden" value="@ticket.asunto" name="asunto">
+                                        <input type="hidden" value="@ticket.cuerpoTicket" name="cuerpoTicket">
+                                        <input type="hidden" value="@ticket.correoEmisor" name="correoEmisor">
+                                        <input type="hidden" value="@ticket.correoReceptor" name="correoReceptor">
+                                        <input type="hidden" value="@ticket.idEstado" name="idEstado">
+                                        <input type="hidden" value="@ticket.equipo" name="equipo">
+                                        <input type="hidden" value="@ticket.tipoConsulta" name="tipoConsulta">
                                     </div>
                                     <div id="sweet-alert" style="position:relative"></div>
                                     <div class="form-step">
@@ -224,17 +224,17 @@ else
                                 <td class="td-sistema">Responsable:</td>
 
 
-                                <div class="d-initial">
-                                            <input type="text" value="@ticket.idTicket" name="idTicket">
-                                            <input type="text" value="@ticket.fechaGeneracion.ToString("dd/MM/yyyy")" name="fechaGeneracion">
-                                            <input type="text" value="@ticket.fechaAsignacion" name="fechaAsignacion">
-                                            <input type="text" value="@ticket.fechaCierre" name="fechaCierre">
-                                            <input type="text" value="@ticket.asunto" name="asunto">
-                                            <input type="text" value="@ticket.cuerpoTicket" name="cuerpoTicket">
-                                            <input type="text" value="@ticket.respuestaTicket" name="respuestaTicket">
-                                            <input type="text" value="@ticket.correoEmisor" name="correoEmisor">
-                                            <input type="text" value="@ticket.equipo" name="equipo">
-                                            <input type="text" value="@ticket.tipoConsulta" name="tipoConsulta">
+                                <div class="d-none">
+                                            <input type="hidden" value="@ticket.idTicket" name="idTicket">
+                                            <input type="hidden" value="@ticket.fechaGeneracion.ToString("dd/MM/yyyy")" name="fechaGeneracion">
+                                            <input type="hidden" value="@ticket.fechaAsignacion" name="fechaAsignacion">
+                                            <input type="hidden" value="@ticket.fechaCierre" name="fechaCierre">
+                                            <input type="hidden" value="@ticket.asunto" name="asunto">
+                                            <input type="hidden" value="@ticket.cuerpoTicket" name="cuerpoTicket">
+                                            <input type="hidden" value="@ticket.respuestaTicket" name="respuestaTicket">
+                                            <input type="hidden" value="@ticket.correoEmisor" name="correoEmisor">
+                                            <input type="hidden" value="@ticket.equipo" name="equipo">
+                                            <input type="hidden" value="@ticket.tipoConsulta" name="tipoConsulta">
                                 </div>
 
 
@@ -307,6 +307,7 @@ else
 
                                 <td>Usuario: </td>
                                 <td>
+                                            @ticket.correoEmisor
                                 </td>
                                         <td><input type="submit" name="" id="editar" value="Aceptar" class="boton boton-enviaTicket btn-lg" /></td>
 
@@ -362,7 +363,7 @@ else
                                     }
                                     @if (usuarioRol == "Administrador")
                                     {
-                                        <a class="text-white" href="@(Url.Action("Listado", "Ticket"))">Regresar al inicio</a>
+                                        <a class="text-white" href="@(Url.Action("ListadoGeneral", "TicketAPI"))">Regresar al inicio</a>
 
                                     }
 

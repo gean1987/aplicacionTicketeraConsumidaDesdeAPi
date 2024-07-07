@@ -1,0 +1,86 @@
+﻿@using System.IO;
+@using Microsoft.AspNetCore.Http;
+@using System.Security.Claims;
+
+@inject IHttpContextAccessor Accessor
+@{
+    string? email = Accessor.HttpContext.Session.GetString("emailUsuarioNoEncontrado");
+    // Obtener nombre y rol del usuario desde la sesión
+    string usuarioNombres = Accessor.HttpContext.Session.GetString("Usuario_NombresUsuario") ?? "Invitado";
+    string usuarioRol = Accessor.HttpContext.Session.GetString("Usuario_Rol") ?? "Sin Rol";
+
+    // Obtener los roles del usuario
+    var roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+
+    var data = ViewBag.usuarios as SERVICE_DESK.Models.Usuario;
+
+
+}
+
+@if (usuarioNombres != "Invitado")
+{
+    ViewBag.Title = "Actualizar Usuario";
+    Layout = "~/Views/Shared/_Plantillaticketera.cshtml";
+}
+else
+{
+    ViewBag.Title = "Sin Autorización";
+    Layout = "~/Views/Shared/Error.cshtml";
+}
+
+<div class="d-none">
+    @if (TempData["mensaje"] != null)
+    {
+        <div class="@TempData["alerta"]" role="alert">
+            @TempData["mensaje"]
+        </div>
+    }
+</div>
+<h1>EliminarDatosUsuario</h1>
+
+<form method="post" action="/MantenimientoUsuario/ActualizarUsuario">
+
+    <input type="hidden" value="@data.idUsuario" name="idUsuario" />
+
+    <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Nombre</label>
+        <input type="text" value="@data.nombre" name="nombre" class="form-control" id="exampleInputEmail1" aria-describedby="nombreUsuario">
+        <div id="nombreUsuario" class="form-text">We'll never share your email with anyone else.</div>
+    </div>
+    <div class="mb-3">
+        <label for="apellido" class="form-label">Apellido</label>
+        <input type="text" value="@data.apellido" name="apellido" class="form-control" id="apellido">
+    </div>
+
+    <div class="mb-3">
+        <label for="correo" class="form-label">Correo</label>
+        <input type="email" value="@data.correo" name="correo" class="form-control" id="correo">
+    </div>
+
+    <div class="mb-3">
+        <label for="correo" class="form-label">Contraseña</label>
+        <input type="email" value="@data.contraseña" name="contraseña" class="form-control" id="contraseña">
+    </div>
+    <label for="correo" class="form-label">Rol</label>
+
+    <div class="mb-3 form-check">
+        <input type="radio" value="Administrador" name="rol" class="form-check-input" id="Administrador"
+        @(data.rol == "Administrador" ? "checked" : "")>
+        <label class="form-check-label" for="Administrador">Administrador</label>
+    </div>
+
+    <div class="mb-3 form-check">
+        <input type="radio" value="Receptor" name="rol" class="form-check-input" id="Responsable"
+        @(data.rol == "Receptor" ? "checked" : "")>
+        <label class="form-check-label" for="Responsable">Receptor</label>
+    </div>
+
+    <div class="mb-3 form-check">
+        <input type="radio" value="Emisor" name="rol" class="form-check-input" id="usuario"
+        @(data.rol == "Emisor" ? "checked" : "")>
+        <label class="form-check-label" for="usuario">Emisor</label>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Grabar</button>
+</form>

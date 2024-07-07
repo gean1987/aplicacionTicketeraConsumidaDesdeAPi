@@ -67,9 +67,9 @@ namespace SERVICE_DESK.Gestiones
                         {
                             usuario = new Usuario()
                             {
-                                IdUsuario = dr.GetInt32(0),
+                                idUsuario = dr.GetInt32(0),
                                 nombre = dr.GetString(1),
-                                Rol = dr.GetString(2),
+                                rol = dr.GetString(2),
                                 correo = dr.GetString(3)
                             };
                         }

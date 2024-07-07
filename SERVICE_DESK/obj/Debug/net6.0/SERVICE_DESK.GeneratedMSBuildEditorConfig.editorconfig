@@ -40,6 +40,54 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/MantenimientoEquipo/actualizarequipo.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b0VxdWlwb1xhY3R1YWxpemFyZXF1aXBvLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/MantenimientoEquipo/Crearequipo.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b0VxdWlwb1xDcmVhcmVxdWlwby5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/MantenimientoEquipo/EliminarDatosequipo.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b0VxdWlwb1xFbGltaW5hckRhdG9zZXF1aXBvLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/MantenimientoEquipo/Listadoequipos.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b0VxdWlwb1xMaXN0YWRvZXF1aXBvcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/MantenimientoTipoConsulta/actualizartipoConsulta.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b1RpcG9Db25zdWx0YVxhY3R1YWxpemFydGlwb0NvbnN1bHRhLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/MantenimientoTipoConsulta/CreartipoConsulta.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b1RpcG9Db25zdWx0YVxDcmVhcnRpcG9Db25zdWx0YS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/MantenimientoTipoConsulta/EliminarDatostipoConsulta.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b1RpcG9Db25zdWx0YVxFbGltaW5hckRhdG9zdGlwb0NvbnN1bHRhLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/MantenimientoTipoConsulta/ListadotipoConsulta.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b1RpcG9Db25zdWx0YVxMaXN0YWRvdGlwb0NvbnN1bHRhLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/MantenimientoUsuario/actualizarUsuario.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b1VzdWFyaW9cYWN0dWFsaXphclVzdWFyaW8uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/MantenimientoUsuario/CrearUsuario.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b1VzdWFyaW9cQ3JlYXJVc3VhcmlvLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/MantenimientoUsuario/EliminarDatosUsuario.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b1VzdWFyaW9cRWxpbWluYXJEYXRvc1VzdWFyaW8uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/MantenimientoUsuario/ListadoUsuarios.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b1VzdWFyaW9cTGlzdGFkb1VzdWFyaW9zLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/RENZO/Downloads/serivceDeskLogistica/SERVICE_DESK/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 

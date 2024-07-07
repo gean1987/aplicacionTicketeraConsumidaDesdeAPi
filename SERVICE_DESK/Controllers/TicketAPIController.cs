@@ -4,6 +4,35 @@ using SERVICE_DESK.Models;
 using System.Security.Claims;
 using System.Text;
 
+using HtmlAgilityPack;
+using SERVICE_DESK.Gestiones;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Microsoft.AspNetCore.Http;
+using SERVICE_DESK.Enums;
+using System.Net.Mail;
+using Microsoft.AspNetCore.Http;
+using System.Net;
+using System.Diagnostics;
+//using ClosedXML.Excel;
+using System.IO;
+using System.Data;
+using ClosedXML.Excel;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using DocumentFormat.OpenXml.Wordprocessing;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.Routing;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using Microsoft.AspNetCore.Http.Extensions;
+
 namespace SERVICE_DESK.Controllers
 {
     public class TicketAPIController : Controller
@@ -11,11 +40,18 @@ namespace SERVICE_DESK.Controllers
 
 
         private readonly HttpClient _httpClient;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConfiguration Configuration;
+        private readonly IUrlHelperFactory _urlHelperFactory;
 
-        public TicketAPIController(IHttpClientFactory httpClientFactory)
+        public TicketAPIController(IHttpClientFactory httpClientFactory, IConfiguration configuration, IUrlHelperFactory urlHelperFactory = null)
         {
             _httpClient = httpClientFactory.CreateClient();
             _httpClient.BaseAddress = new Uri("http://localhost:8081/"); // Cambia la URL base según tu configuración
+            Configuration = configuration;
+            _urlHelperFactory = urlHelperFactory;
+
+
         }
 
         //VistaAdministrador
@@ -42,9 +78,37 @@ namespace SERVICE_DESK.Controllers
             }
             else
             {
-                ViewBag.Estados = null;
+                ViewBag.Estados = new List<Estado>();
             }
+
+            // Llamar al endpoint para obtener los equipos
+            HttpResponseMessage equipoResponse = await _httpClient.GetAsync("equipo");
+            if (equipoResponse.IsSuccessStatusCode)
+            {
+                string equipoData = await equipoResponse.Content.ReadAsStringAsync();
+                var equipos = JsonConvert.DeserializeObject<List<equipo>>(equipoData);
+                ViewBag.Equipos = equipos;
+            }
+            else
+            {
+                ViewBag.Equipos = new List<equipo>();
+            }
+
+            // Llamar al endpoint para obtener los tipos de consulta
+            HttpResponseMessage tipoConsultaResponse = await _httpClient.GetAsync("tipoConsulta");
+            if (tipoConsultaResponse.IsSuccessStatusCode)
+            {
+                string tipoConsultaData = await tipoConsultaResponse.Content.ReadAsStringAsync();
+                var tipoConsulta = JsonConvert.DeserializeObject<List<tipoConsulta>>(tipoConsultaData);
+                ViewBag.TipoConsulta = tipoConsulta;
+            }
+            else
+            {
+                ViewBag.TipoConsulta = new List<tipoConsulta>();
+            }
+
             return View();
+
         }
         //VistaResponsable
         public async Task<IActionResult> MisTicketsAsignados()
@@ -60,6 +124,45 @@ namespace SERVICE_DESK.Controllers
             {
                 ViewBag.Tickets = new List<Ticket>();
             }
+            // Llamar al endpoint para obtener los estados
+            HttpResponseMessage estadosResponse = await _httpClient.GetAsync("estado");
+            if (estadosResponse.IsSuccessStatusCode)
+            {
+                string estadosData = await estadosResponse.Content.ReadAsStringAsync();
+                var estados = JsonConvert.DeserializeObject<List<Estado>>(estadosData);
+                ViewBag.Estados = estados;
+            }
+            else
+            {
+                ViewBag.Estados = new List<Estado>();
+            }
+
+            // Llamar al endpoint para obtener los equipos
+            HttpResponseMessage equipoResponse = await _httpClient.GetAsync("equipo");
+            if (equipoResponse.IsSuccessStatusCode)
+            {
+                string equipoData = await equipoResponse.Content.ReadAsStringAsync();
+                var equipos = JsonConvert.DeserializeObject<List<equipo>>(equipoData);
+                ViewBag.Equipos = equipos;
+            }
+            else
+            {
+                ViewBag.Equipos = new List<equipo>();
+            }
+
+            // Llamar al endpoint para obtener los tipos de consulta
+            HttpResponseMessage tipoConsultaResponse = await _httpClient.GetAsync("tipoConsulta");
+            if (tipoConsultaResponse.IsSuccessStatusCode)
+            {
+                string tipoConsultaData = await tipoConsultaResponse.Content.ReadAsStringAsync();
+                var tipoConsulta = JsonConvert.DeserializeObject<List<tipoConsulta>>(tipoConsultaData);
+                ViewBag.TipoConsulta = tipoConsulta;
+            }
+            else
+            {
+                ViewBag.TipoConsulta = new List<tipoConsulta>();
+            }
+
             return View();
         }
 
@@ -227,12 +330,20 @@ namespace SERVICE_DESK.Controllers
 
                 var response = await _httpClient.PostAsync("ticket", content);
 
+                var urlHelper = _urlHelperFactory.GetUrlHelper(ControllerContext);
+                string enlace = $"https://localhost:7162/{urlHelper.Action("ListadoGeneral", "TicketAPI")}";
+
                 if (response.IsSuccessStatusCode)
                 {
                     var responseData = await response.Content.ReadAsStringAsync();
                     var createdTicket = JsonConvert.DeserializeObject<Ticket>(responseData);
                     TempData["mensaje"] = "El ticket se ha actualizado correctamente.";
+                    EnviarCorreoElectronico("Hay un nuevo ticket de asunto:", ticket.asunto, ticket.cuerpoTicket, "SERVICEDESKLogistica@outlook.com", enlace);
+
                     return RedirectToAction("MisTickets", "TicketAPI");
+
+
+
                 }
                 else
                 {
@@ -266,10 +377,26 @@ namespace SERVICE_DESK.Controllers
 
                 string redirectUrl = $"https://localhost:7162/TicketAPI/AbrirTicket?id={ticket.idTicket}";
 
+                var urlHelper = _urlHelperFactory.GetUrlHelper(ControllerContext);
+                string enlace = $"https://localhost:7162/{urlHelper.Action("AbrirTicket", "TicketAPI")}?id={ticket.idTicket}";
+
                 if (response.IsSuccessStatusCode)
                 {
                     TempData["mensaje"] = "El ticket se ha actualizado correctamente.";
                     TempData["mensajeTipo"] = "success";
+
+                    if(ticket.idEstado ==2 &&( ticket.correoReceptor != null ))
+                    {
+                        EnviarCorreoElectronico("Hay un nuevo ticket de asunto:", ticket.asunto, ticket.cuerpoTicket, ticket.correoReceptor, enlace);
+
+                    }
+                    if (ticket.idEstado == 3 && (ticket.correoEmisor != null ))
+                    {
+                        EnviarCorreoElectronico("Su ticket ah sido atendido:", ticket.asunto, ticket.cuerpoTicket, ticket.correoReceptor, enlace);
+
+                    }
+
+
                     return Redirect(redirectUrl);
                 }
                 else
@@ -356,6 +483,72 @@ namespace SERVICE_DESK.Controllers
 
             return View("MisTickets");
         }
+
+
+
+
+
+        private void EnviarCorreoElectronico(string ticketEnviado, string asunto, string cuerpo, string destinatario,  string enlace)
+        {
+            string asuntoSeteado = ticketEnviado + ' ' + asunto;
+            {
+                try
+                {
+                    using (SmtpClient smtpClient = new SmtpClient
+                    {
+                        Host = Configuration["SmtpSettings:Host"],
+                        Port = int.Parse(Configuration["SmtpSettings:Port"]),
+                        Credentials = new NetworkCredential(Configuration["SmtpSettings:UserName"], Configuration["SmtpSettings:Password"]),
+                        EnableSsl = bool.Parse(Configuration["SmtpSettings:EnableSsl"])
+                    })
+                    {
+                        MailMessage mail = new MailMessage();
+                        mail.From = new MailAddress("SERVICEDESKLogistica@outlook.com");
+
+                        // Separar múltiples destinatarios utilizando comas
+                        string[] destinatarios = destinatario.Split(',');
+
+                        foreach (string destinatarioIndividual in destinatarios)
+                        {
+                            mail.To.Add(destinatarioIndividual.Trim());
+                        }
+                        mail.Subject = asuntoSeteado;
+                        string body = $@"
+            <html>
+            <body style='font-family: Arial, sans-serif;'>
+                <p>De categoría <strong></strong>.</p>
+                <p>Para abrir el ticket, por favor siga este enlace:</p>
+                <div style='text-align: center; margin: 20px 0;'>
+                    <a href='{enlace}' style='display: inline-block; padding: 10px 20px; font-size: 16px; color: #fff; background-color: #3696fb; text-align: center; text-decoration: none; border-radius: 5px;'>Abrir Ticket</a>
+                </div>
+                <p>¡Favor de NO responder este correo! </p>
+                <p>Atentamente, </p>
+                <p>Service Desk Logística </p>
+
+            </body>
+            </html>";
+
+                        mail.Body = body;
+                        mail.IsBodyHtml = true;
+
+                      
+
+                        smtpClient.Send(mail);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Manejar cualquier error al enviar el correo
+                    throw new Exception("Error al enviar el correo electrónico: " + ex.Message, ex);
+                }
+            }
+
+        }
+
+
+
+
+
 
 
 

@@ -53,10 +53,10 @@ namespace SERVICE_DESK.Gestiones
                     {
                         oLista.Add(new Usuario()
                         {
-                            IdUsuario = Convert.ToInt32(dr["id_usuario"]),
+                            idUsuario = Convert.ToInt32(dr["id_usuario"]),
                             nombre = dr["Nombre"].ToString(),
                             correo = dr["mail"].ToString(),
-                            Rol = dr["Rol"].ToString()
+                            rol = dr["Rol"].ToString()
                         });
 
                     }
